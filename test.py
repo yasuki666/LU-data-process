@@ -1,43 +1,21 @@
-from PyQt5 import QtCore, QtGui, QtWidgets, Qt
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QApplication, QWidget
+import sys
+import pyqtgraph as pg
+import numpy as np
 
-class Ui_MainWindow(QtWidgets.QMainWindow):
-
+class win(QWidget):
     def __init__(self):
-        super(Ui_MainWindow,self).__init__()
-        self.setupUi(self)
-        self.retranslateUi(self)
+        super().__init__()
+        self.resize(600,300)
+        self.pw = pg.PlotWidget(self)  # 创建一个绘图控件
+        #要将pyqtgraph的图形添加到pyqt5的部件中，我们首先要做的就是将pyqtgraph的绘图方式由window改为widget。PlotWidget方法就是通过widget方法进行绘图的
+        self.pw.resize(400,200)
+        self.pw.move(10,10)
+        data = np.random.random(size=50)
+        self.pw.plot(data)  # 在绘图控件中绘制图形
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(386, 127)
-        self.centralWidget = QtWidgets.QWidget(MainWindow)
-        self.centralWidget.setObjectName("centralWidget")
-        self.retranslateUi(MainWindow)
-
-        self.pushButton = QtWidgets.QPushButton(self.centralWidget)
-        self.pushButton.setGeometry(QtCore.QRect(190, 90, 75, 23))
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton.setText("打开")
-        MainWindow.setCentralWidget(self.centralWidget)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-        self.pushButton.clicked.connect(self.openfile)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "一颗数据小白菜"))
-
-
-    def openfile(self):
-        openfile_name = QFileDialog.getOpenFileName(self,'选择文件','','Excel files(*.xlsx , *.xls)')
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+if __name__=='__main__':
+    app=QApplication(sys.argv)
+    w=win()
+    w.show()
     sys.exit(app.exec_())

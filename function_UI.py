@@ -14,6 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QAction,QMainWindow,QFileDialog,QTextEdit,QMessageBox
 from PyQt5.QtWidgets import QApplication
 
+import pyqtgraph as pg
+
 import pandas as pd
 import numpy as np
 
@@ -28,13 +30,42 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         #open new file
         self.actionopen_new_file.triggered.connect(self.open_file)
 
-        #按钮 导入数据
-        self.column_number_value.setText('1')
+        #控制区模块 初始化
+        self.column_number_value.setText('1') #默认列数为1
+        self.sampling_rate_value.setText('2000')  #默认采样率为2000MHz
+        self.start_sampling_time_value.setText('1') #默认开始采样时间为1us
+        self.end_sampling_time_value.setText('5') #默认结束采样时间为5us
+
+        # 按钮 导入数据
         self.import_data_button.clicked.connect(self.import_data)
 
-        #按钮 数据列数改变 ← →
+        # 按钮 数据列数改变 ← →
         self.last_column_button.clicked.connect(self.column_number_minus)
         self.next_column_button.clicked.connect(self.column_number_plus)
+
+        # 必须先将四个画布建立好
+        pg.setConfigOption('background', 'w')
+        pg.setConfigOption('foreground', 'k')
+        self.original_time_canvas = pg.PlotWidget(self.Original_time)  # 创建一个绘图控件
+        self.original_time_canvas.resize(300,160)
+        self.original_time_canvas_plot = self.original_time_canvas.plot()
+        self.original_frequency_canvas = pg.PlotWidget(self.Original_frequency)
+        self.original_frequency_canvas.resize(300, 160)
+        self.original_frequency_canvas_plot = self.original_frequency_canvas.plot()
+        self.processed_time_canvas = pg.PlotWidget(self.processed_time)
+        self.processed_time_canvas.resize(300,160)
+        self.processed_time_canvas_plot = self.processed_time_canvas.plot()
+        self.processed_frequency_canvas = pg.PlotWidget(self.processed_frequency)
+        self.processed_frequency_canvas.resize(300,160)
+        self.processed_frequency_canvas_plot = self.processed_frequency_canvas.plot()
+
+        # 按钮 作图
+        self.drawing_button.clicked.connect(self.original_data_time_frequency_drawing)
+
+
+
+
+
 
     #函数 打开文件对话窗 将路径保存至文件路径栏
     def open_file(self):
@@ -54,6 +85,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
     #函数 数据列数减1
     def column_number_minus(self):
         num = int(self.column_number_value.text())
+        # 判断是否越栈
         if num > 1:
             num -= 1
         self.column_number_value.setText(str(num))
@@ -61,6 +93,26 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
     #函数 数据列数加1
     def column_number_plus(self):
         num = int(self.column_number_value.text())
+        self.column_total_number = self.file_data.shape[1]
         num += 1
+        #判断是否越栈
+        if num >= self.column_total_number:
+            num -= 1
+            QMessageBox.information(self.centralwidget, '提示', '已到达最后一列')
         self.column_number_value.setText(str(num))
+
+    #函数 画图 将原始数据时域图与频域图画出
+    def original_data_time_frequency_drawing(self):
+        try:
+            # 原始数据时域图
+            column_num = int(self.column_number_value.text())
+            time_aix = self.file_data[:,0]
+            amplitude_aix = self.file_data[:,column_num]
+            self.original_time_canvas_plot.setData(time_aix,amplitude_aix, pen = 'b')  #pen参数改变线条颜色，symbol改变点形状，symbolColor改变点颜色
+
+            # 原始数据频域图
+
+
+        except:
+            QMessageBox.information(self.centralwidget, '提示', '未导入数据或数据有误')
 
