@@ -32,7 +32,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
 
         #控制区模块 初始化
         self.column_number_value.setText('1') #默认列数为1
-        self.sampling_rate_value.setText('2000')  #默认采样率为2000MHz
+        self.sampling_rate_value.setText('2500')  #默认采样率为2500MHz
         self.start_sampling_time_value.setText('1') #默认开始采样时间为1us
         self.end_sampling_time_value.setText('5') #默认结束采样时间为5us
 
@@ -70,7 +70,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
     #函数 打开文件对话窗 将路径保存至文件路径栏
     def open_file(self):
         #注意，这里参数必须传入self.centralwidget，因为QFileDialog只接受widget参数
-        file_name = QFileDialog.getOpenFileName(self.centralwidget,'选择文件','','Excel files(*.xlsx , *.xls)')
+        file_name = QFileDialog.getOpenFileName(self.centralwidget,'选择文件','','Excel files(*.xlsx , *.xls , *.csv)')
         self.file_path_value.setText(file_name[0])
 
     #函数 按文件路径栏已储存的路径将文件数据导入
@@ -105,12 +105,38 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
     def original_data_time_frequency_drawing(self):
         try:
             # 原始数据时域图
-            column_num = int(self.column_number_value.text())
-            time_aix = self.file_data[:,0]
-            amplitude_aix = self.file_data[:,column_num]
-            self.original_time_canvas_plot.setData(time_aix,amplitude_aix, pen = 'b')  #pen参数改变线条颜色，symbol改变点形状，symbolColor改变点颜色
+            self.column_num = int(self.column_number_value.text())
+            self.time_aix = self.file_data[:,0]
+            self.time_aix = self.time_aix * 1000000
+            self.original_time_amplitude_aix = self.file_data[:, self.column_num]
+            try:
+                i,j = 0,0
+                while(self.time_aix[i]<int(self.start_sampling_time_value.text())):
+                    i += 1
+                while(self.time_aix[j]<int(self.end_sampling_time_value.text())):
+                    j += 1
+                self.time_aix = self.time_aix[i:j]
+
+                self.original_time_amplitude_aix = self.original_time_amplitude_aix[i:j]
+                self.original_time_canvas_plot.setData(self.time_aix, self.original_time_amplitude_aix,pen='b')  # pen参数改变线条颜色，symbol改变点形状，symbolColor改变点颜色
+            except:
+                QMessageBox.information(self.centralwidget, '提示', '采样时间设置有误')
 
             # 原始数据频域图
+            temprory_time_amplitude_aix = self.original_time_amplitude_aix - np.mean(self.original_time_amplitude_aix) #消去直流分量，更能体现频谱信息
+            self.original_frequency_amplitude_aix = np.fft.fft(temprory_time_amplitude_aix) # 快速傅里叶变换
+            self.original_frequency_amplitude_aix = abs(self.original_frequency_amplitude_aix)
+            n = len(self.original_time_amplitude_aix)
+            self.frequency_aix = []
+            self.sampling_rate = int(self.sampling_rate_value.text())
+            for i in range(n):
+                self.frequency_aix.append(i * self.sampling_rate/n)
+            self.frequency_aix = self.frequency_aix[:int(n/2)]
+            self.original_frequency_amplitude_aix = self.original_frequency_amplitude_aix[:int(n/2)]
+            #为了方便观看只展示前边0-100MHz部分
+            self.showing_frequency_aix = self.frequency_aix[:int(n*100/(self.sampling_rate))]
+            self.showing_original_frequency_amplitude_aix = self.original_frequency_amplitude_aix[:int(n*100/(self.sampling_rate))]
+            self.original_frequency_canvas_plot.setData(self.showing_frequency_aix, self.showing_original_frequency_amplitude_aix,pen = 'b')
 
 
         except:
