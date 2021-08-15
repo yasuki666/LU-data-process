@@ -18,6 +18,7 @@ import pyqtgraph as pg
 
 import pandas as pd
 import numpy as np
+from scipy import signal
 
 import original_UI
 
@@ -61,6 +62,19 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
 
         # 按钮 作图
         self.drawing_button.clicked.connect(self.original_data_time_frequency_drawing)
+
+        # box 低通滤波
+        self.passbond_boundary_frequency_value.setText('12.24')
+        self.stopband_boundary_frequency_value.setText('25')
+        self.lowpass_filter_button.clicked.connect(self.lowpass_filter)
+
+        # box 带通滤波
+        self.passbond_lowerlimit_frequency_value.setText('5.3')
+        self.passbond_upperlimit_frequency_value.setText('12.24')
+        self.stopbond_lowerlimit_frequency_value.setText('3')
+        self.stopbond_upperlimit_frequency_value.setText('25')
+        self.bandpass_filter_button.clicked.connect(self.bandpass_filter)
+
 
 
 
@@ -125,10 +139,11 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
             # 原始数据频域图
             temprory_time_amplitude_aix = self.original_time_amplitude_aix - np.mean(self.original_time_amplitude_aix) #消去直流分量，更能体现频谱信息
             self.original_frequency_amplitude_aix = np.fft.fft(temprory_time_amplitude_aix) # 快速傅里叶变换
-            self.original_frequency_amplitude_aix = abs(self.original_frequency_amplitude_aix)
+            self.original_frequency_amplitude_aix = abs(self.original_frequency_amplitude_aix) #转换到实数域
             n = len(self.original_time_amplitude_aix)
             self.frequency_aix = []
             self.sampling_rate = int(self.sampling_rate_value.text())
+            #得到频域横坐标
             for i in range(n):
                 self.frequency_aix.append(i * self.sampling_rate/n)
             self.frequency_aix = self.frequency_aix[:int(n/2)]
@@ -137,8 +152,79 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
             self.showing_frequency_aix = self.frequency_aix[:int(n*100/(self.sampling_rate))]
             self.showing_original_frequency_amplitude_aix = self.original_frequency_amplitude_aix[:int(n*100/(self.sampling_rate))]
             self.original_frequency_canvas_plot.setData(self.showing_frequency_aix, self.showing_original_frequency_amplitude_aix,pen = 'b')
-
-
         except:
             QMessageBox.information(self.centralwidget, '提示', '未导入数据或数据有误')
 
+    #函数 低通滤波
+    def lowpass_filter(self):
+        try:
+            self.original_data_time_frequency_drawing()
+            frequency_pass = float(self.passbond_boundary_frequency_value.text()) * 1000000
+            frequency_stop = float(self.stopband_boundary_frequency_value.text()) * 1000000
+            normalized_frequency_pass = frequency_pass / (self.sampling_rate * 1000000 / 2) #归一化
+            normalized_frequency_stop = frequency_stop / (self.sampling_rate * 1000000 / 2)
+            max_passband_loss = 1  # 通带最大衰减 ，默认为1dB
+            min_stopband_attenuation = 20  # 阻带最小衰减，默认为20dB
+
+            # filter_order为巴特沃斯滤波器阶数，butterworth_natrual_frequency为3dB截止频率
+            filter_order, butterworth_natrual_frequency = signal.buttord(normalized_frequency_pass,
+                                                                         normalized_frequency_stop,
+                                                                         max_passband_loss,
+                                                                         min_stopband_attenuation)
+            b,a = signal.butter(filter_order,butterworth_natrual_frequency,'lowpass')
+            self.processed_time_amplitude_aix = signal.filtfilt(b,a,self.original_time_amplitude_aix)
+            self.processed_time_canvas_plot.setData(self.time_aix,self.processed_time_amplitude_aix,pen = 'b')
+
+            #转换至频域
+            temprory_time_amplitude_aix = self.processed_time_amplitude_aix - np.mean(self.processed_time_amplitude_aix)  # 消去直流分量，更能体现频谱信息
+            self.processed_frequency_amplitude_aix = np.fft.fft(temprory_time_amplitude_aix)  # 快速傅里叶变换
+            self.processed_frequency_amplitude_aix = abs(self.processed_frequency_amplitude_aix)  # 转换到实数域
+
+            n = len(self.processed_time_amplitude_aix)
+            self.sampling_rate = int(self.sampling_rate_value.text())
+            self.processed_frequency_amplitude_aix = self.processed_frequency_amplitude_aix[:int(n / 2)]
+            # 为了方便观看只展示前边0-100MHz部分
+            self.showing_processed_frequency_amplitude_aix = self.processed_frequency_amplitude_aix[:int(n * 100 / (self.sampling_rate))]
+            self.processed_frequency_canvas_plot.setData(self.showing_frequency_aix,
+                                                         self.showing_processed_frequency_amplitude_aix, pen='b')
+        except:
+            QMessageBox.information(self.centralwidget, '提示', '滤波失败，请检查滤波参数！')
+
+    #函数 带通滤波
+    def bandpass_filter(self):
+        try:
+            self.original_data_time_frequency_drawing()
+            # 首先设计巴特沃斯滤波器
+            frequency_pass_low = float(self.passbond_lowerlimit_frequency_value.text()) * 1000000
+            frequency_pass_high = float(self.passbond_upperlimit_frequency_value.text()) * 1000000
+            frequency_stop_low = float(self.stopbond_lowerlimit_frequency_value.text()) * 1000000
+            frequency_stop_high = float(self.stopbond_upperlimit_frequency_value.text()) * 1000000
+            passband_array = np.array([frequency_pass_low, frequency_pass_high])
+            stopband_array = np.array([frequency_stop_low, frequency_stop_high])
+            normalized_passband_array = passband_array / (self.sampling_rate * 1000000 / 2)  # 归一化
+            normalized_stopband_array = stopband_array / (self.sampling_rate * 1000000 / 2)
+            max_passband_loss = 1  # 通带最大衰减 ，默认为1dB
+            min_stopband_attenuation = 20  # 阻带最小衰减，默认为20dB
+
+            # filter_order为巴特沃斯滤波器阶数，butterworth_natrual_frequency为3dB截止频率
+            filter_order, butterworth_natrual_frequency = signal.buttord(normalized_passband_array,
+                                                                         normalized_stopband_array,
+                                                                         max_passband_loss,
+                                                                         min_stopband_attenuation)
+            b, a = signal.butter(filter_order, butterworth_natrual_frequency, 'bandpass')  # b,a分别为滤波多项式的分子(b)和分母(a)
+            self.processed_time_amplitude_aix = signal.filtfilt(b, a, self.original_time_amplitude_aix)
+            self.processed_time_canvas_plot.setData(self.time_aix, self.processed_time_amplitude_aix, pen='b')
+
+            #变换频域
+            temprory_time_amplitude_aix = self.processed_time_amplitude_aix - np.mean( self.processed_time_amplitude_aix)  # 消去直流分量，更能体现频谱信息
+            self.processed_frequency_amplitude_aix = np.fft.fft(temprory_time_amplitude_aix)  # 快速傅里叶变换
+            self.processed_frequency_amplitude_aix = abs(self.processed_frequency_amplitude_aix)  # 转换到实数域
+            n = len(self.processed_time_amplitude_aix)
+            self.sampling_rate = int(self.sampling_rate_value.text())
+            self.processed_frequency_amplitude_aix = self.processed_frequency_amplitude_aix[:int(n / 2)]
+            # 为了方便观看只展示前边0-100MHz部分
+            self.showing_processed_frequency_amplitude_aix = self.processed_frequency_amplitude_aix[:int(n * 100 / (self.sampling_rate))]
+            self.processed_frequency_canvas_plot.setData(self.showing_frequency_aix,
+                                                        self.showing_processed_frequency_amplitude_aix, pen='b')
+        except:
+            QMessageBox.information(self.centralwidget, '提示', '滤波失败，请检查滤波参数！')
