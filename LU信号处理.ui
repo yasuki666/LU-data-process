@@ -123,15 +123,15 @@
     <widget class="QLineEdit" name="passbond_lowerlimit_frequency_value">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>140</x>
        <y>20</y>
-       <width>91</width>
+       <width>51</width>
        <height>20</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -142,15 +142,15 @@
     <widget class="QLineEdit" name="passbond_upperlimit_frequency_value">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>140</x>
        <y>50</y>
-       <width>91</width>
+       <width>51</width>
        <height>20</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -161,15 +161,15 @@
     <widget class="QLineEdit" name="stopbond_lowerlimit_frequency_value">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>140</x>
        <y>80</y>
-       <width>91</width>
+       <width>51</width>
        <height>20</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -180,15 +180,15 @@
     <widget class="QLineEdit" name="stopbond_upperlimit_frequency_value">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>140</x>
        <y>110</y>
-       <width>91</width>
+       <width>51</width>
        <height>20</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -220,7 +220,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>71</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
@@ -231,7 +231,7 @@
       </font>
      </property>
      <property name="text">
-      <string>通带下限频率</string>
+      <string>通带下限频率(MHz):</string>
      </property>
     </widget>
     <widget class="QLabel" name="passbond_upperlimit_frequency_text">
@@ -239,7 +239,7 @@
       <rect>
        <x>20</x>
        <y>50</y>
-       <width>71</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
@@ -250,7 +250,7 @@
       </font>
      </property>
      <property name="text">
-      <string>通带上限频率</string>
+      <string>通带上限频率(MHz):</string>
      </property>
     </widget>
     <widget class="QLabel" name="stopbond_lowerlimit_frequency_text">
@@ -258,7 +258,7 @@
       <rect>
        <x>20</x>
        <y>80</y>
-       <width>71</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
@@ -269,7 +269,7 @@
       </font>
      </property>
      <property name="text">
-      <string>阻带下限频率</string>
+      <string>阻带下限频率(MHz):</string>
      </property>
     </widget>
     <widget class="QLabel" name="stopbond_upperlimit_frequency_text">
@@ -277,7 +277,7 @@
       <rect>
        <x>20</x>
        <y>110</y>
-       <width>71</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
@@ -288,7 +288,7 @@
       </font>
      </property>
      <property name="text">
-      <string>阻带上限频率</string>
+      <string>阻带上限频率(MHz):</string>
      </property>
     </widget>
    </widget>
@@ -340,7 +340,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -376,7 +376,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -402,7 +402,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -433,7 +433,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -452,7 +452,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -465,8 +465,8 @@
       <rect>
        <x>40</x>
        <y>170</y>
-       <width>131</width>
-       <height>21</height>
+       <width>111</width>
+       <height>23</height>
       </rect>
      </property>
      <property name="font">
@@ -615,15 +615,15 @@
     <widget class="QLineEdit" name="stopband_boundary_frequency_value">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>140</x>
        <y>50</y>
-       <width>91</width>
+       <width>51</width>
        <height>20</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -634,15 +634,15 @@
     <widget class="QLineEdit" name="passbond_boundary_frequency_value">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>140</x>
        <y>20</y>
-       <width>91</width>
+       <width>51</width>
        <height>20</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -674,7 +674,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>71</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
@@ -685,7 +685,7 @@
       </font>
      </property>
      <property name="text">
-      <string>通带边界频率</string>
+      <string>通带边界频率(MHz):</string>
      </property>
     </widget>
     <widget class="QLabel" name="stopband_boundary_frequency_text">
@@ -693,7 +693,7 @@
       <rect>
        <x>20</x>
        <y>50</y>
-       <width>71</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
@@ -704,7 +704,7 @@
       </font>
      </property>
      <property name="text">
-      <string>阻带边界频率</string>
+      <string>阻带边界频率(MHz):</string>
      </property>
     </widget>
    </widget>
@@ -719,7 +719,7 @@
     </property>
     <property name="font">
      <font>
-      <family>Adobe Devanagari</family>
+      <family>Times New Roman</family>
       <pointsize>9</pointsize>
      </font>
     </property>
@@ -738,7 +738,7 @@
     </property>
     <property name="font">
      <font>
-      <family>Adobe Devanagari</family>
+      <family>Times New Roman</family>
       <pointsize>9</pointsize>
      </font>
     </property>
@@ -814,7 +814,7 @@
     </property>
     <property name="font">
      <font>
-      <family>Adobe Devanagari</family>
+      <family>Times New Roman</family>
       <pointsize>9</pointsize>
      </font>
     </property>
@@ -852,7 +852,7 @@
     </property>
     <property name="font">
      <font>
-      <family>Adobe Devanagari</family>
+      <family>Times New Roman</family>
       <pointsize>9</pointsize>
      </font>
     </property>
@@ -865,7 +865,7 @@
      <rect>
       <x>410</x>
       <y>30</y>
-      <width>401</width>
+      <width>421</width>
       <height>21</height>
      </rect>
     </property>
@@ -991,7 +991,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1010,7 +1010,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1048,7 +1048,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1067,7 +1067,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1086,7 +1086,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1162,7 +1162,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1200,7 +1200,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1238,7 +1238,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1276,7 +1276,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1295,7 +1295,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1314,7 +1314,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Adobe Devanagari</family>
+       <family>Times New Roman</family>
        <pointsize>9</pointsize>
       </font>
      </property>
@@ -1383,6 +1383,19 @@
      </property>
     </widget>
    </widget>
+   <widget class="QPushButton" name="next_file_button">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>30</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>↓</string>
+    </property>
+   </widget>
    <zorder>bandpass_filter_box</zorder>
    <zorder>import_data_button</zorder>
    <zorder>wavelet_filter_box</zorder>
@@ -1402,6 +1415,7 @@
    <zorder>last_column_button</zorder>
    <zorder>next_column_button</zorder>
    <zorder>data_analyse_box</zorder>
+   <zorder>next_file_button</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1423,7 +1437,7 @@
    </widget>
    <widget class="QMenu" name="menuprocess">
     <property name="title">
-     <string>process</string>
+     <string>setting</string>
     </property>
     <addaction name="actionlowpass_filter"/>
     <addaction name="actionbandpass_filter"/>

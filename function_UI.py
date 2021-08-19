@@ -19,6 +19,8 @@ import pyqtgraph as pg
 import pandas as pd
 import numpy as np
 from scipy import signal
+from pywt import wavedec
+import pywt
 
 import original_UI
 
@@ -45,8 +47,8 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         self.next_column_button.clicked.connect(self.column_number_plus)
 
         # 必须先将四个画布建立好
-        pg.setConfigOption('background', 'w')
-        pg.setConfigOption('foreground', 'k')
+        pg.setConfigOption('background', 'w')  #背景色改为白色
+        pg.setConfigOption('foreground', 'k')  #前景色改为黑色
         self.original_time_canvas = pg.PlotWidget(self.Original_time)  # 创建一个绘图控件
         self.original_time_canvas.resize(300,160)
         self.original_time_canvas_plot = self.original_time_canvas.plot()
@@ -75,6 +77,10 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         self.stopbond_upperlimit_frequency_value.setText('25')
         self.bandpass_filter_button.clicked.connect(self.bandpass_filter)
 
+        # box 小波滤波
+        self.decomposition_layer_value.setText('8')
+        self.wavelet_layer_number_value.setText('db3')
+        self.wavelet_filter_button.clicked.connect(self.wavelet_filter)
 
 
 
@@ -228,3 +234,13 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
                                                         self.showing_processed_frequency_amplitude_aix, pen='b')
         except:
             QMessageBox.information(self.centralwidget, '提示', '滤波失败，请检查滤波参数！')
+
+    # 函数 小波滤波
+    def wavelet_filter(self):
+
+        '''a = pywt.wavedec(self.original_time_amplitude_aix,wavelet='db3',level=8)
+        for i in range(1,len(a)):
+            a[i] = pywt.threshold(a[i],0.1*max(a[i]),mode='soft')
+        data_wec = pywt.waverec(a,'db3')
+        self.processed_time_canvas_plot.setData(data_wec)'''
+
