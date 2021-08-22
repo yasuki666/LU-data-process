@@ -70,6 +70,7 @@ def wavelet_single_demensional_denoising_rigrsure_one(data,noise_estimating_meth
     wavelet_data = pywt.wavedec(data, wavelet=wavelet_type, level=int(decomposition_layer_number))
     sigma = 1
     for j in range(1, len(wavelet_data)):
+        temprory_sum = 0   #用于储存f_k数组前n项和，以优化效率节约运行时间
         tmp = wavelet_data[j].copy()
         n = len(tmp)
         tmp.sort()  # 排序
@@ -80,7 +81,8 @@ def wavelet_single_demensional_denoising_rigrsure_one(data,noise_estimating_meth
             f_k.append(i**2)
             lamda_k.append(np.sqrt(i**2))
         for i in range(n):
-            risk_k.append((n- 2*i + sum(f_k[:i]) + (n-i)*f_k[n-i-1]) / n)
+            risk_k.append((n - 2 * i + temprory_sum + (n - i) * f_k[n - i - 1]) / n)  # 原公式risk_k[i] = (n- 2*i + sum(f_k[:i]) + (n-i)*f_k[n-i-1]) / n 但时间复杂度不可接受
+            temprory_sum += f_k[i]
         min_risk = risk_k[0]
         min_risk_index = 0
         for i in range(n):
@@ -102,6 +104,7 @@ def wavelet_single_demensional_denoising_rigrsure_sln(data,noise_estimating_meth
     medium = abs(cmp[int(n / 2)])  # 取中值以估计标准差
     sigma = medium / 0.6745
     for j in range(1, len(wavelet_data)):
+        temprory_sum = 0  #用于储存f_k数组前n项和，以优化效率节约运行时间
         tmp = wavelet_data[j].copy()
         n = len(tmp)
         tmp.sort()  # 排序
@@ -112,7 +115,8 @@ def wavelet_single_demensional_denoising_rigrsure_sln(data,noise_estimating_meth
             f_k.append(i**2)
             lamda_k.append(np.sqrt(i**2))
         for i in range(n):
-            risk_k.append((n- 2*i + sum(f_k[:i]) + (n-i)*f_k[n-i-1]) / n)
+            risk_k.append((n - 2 * i + temprory_sum + (n - i) * f_k[n - i - 1]) / n)  # 原公式risk_k[i] = (n- 2*i + sum(f_k[:i]) + (n-i)*f_k[n-i-1]) / n 但时间复杂度不可接受
+            temprory_sum += f_k[i]
         min_risk = risk_k[0]
         min_risk_index = 0
         for i in range(n):
@@ -129,6 +133,7 @@ def wavelet_single_demensional_denoising_rigrsure_mln(data,noise_estimating_meth
                                          wavelet_type, decomposition_layer_number):
     wavelet_data = pywt.wavedec(data, wavelet=wavelet_type, level=int(decomposition_layer_number))
     for j in range(1, len(wavelet_data)):
+        temprory_sum = 0  #用于储存f_k数组前n项和，以优化效率节约运行时间
         tmp = wavelet_data[j].copy()
         n = len(tmp)
         tmp.sort()  # 排序
@@ -139,7 +144,8 @@ def wavelet_single_demensional_denoising_rigrsure_mln(data,noise_estimating_meth
             f_k.append(tmp[i]**2)
             lamda_k.append(np.sqrt(f_k[i]))
         for i in range(n):
-            risk_k.append((n- 2*i + sum(f_k[:i]) + (n-i)*f_k[n-i-1]) / n)
+            risk_k.append((n- 2*i + temprory_sum + (n-i)*f_k[n-i-1]) / n) #原公式risk_k[i] = (n- 2*i + sum(f_k[:i]) + (n-i)*f_k[n-i-1]) / n 但时间复杂度不可接受
+            temprory_sum += f_k[i]
         min_risk = risk_k[0]
         min_risk_index = 0
         for i in range(n):
@@ -180,11 +186,11 @@ data_denoising_2 = wavelet_single_demensional_denoising_rigrsure(data,threshold_
 time_3 = time.time()
 data_denoising_3 = wavelet_single_demensional_denoising_rigrsure(data,threshold_usage='mln',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
 time_4 = time.time()
-data_denoising_4= wavelet_single_demensional_denoising_sqtwolog(data,threshold_usage='one',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
+data_denoising_4 = wavelet_single_demensional_denoising_sqtwolog(data,threshold_usage='one',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
 time_5 = time.time()
-data_denoising_5= wavelet_single_demensional_denoising_sqtwolog(data,threshold_usage='sln',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
+data_denoising_5 = wavelet_single_demensional_denoising_sqtwolog(data,threshold_usage='sln',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
 time_6 = time.time()
-data_denoising_6= wavelet_single_demensional_denoising_sqtwolog(data,threshold_usage='mln',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
+data_denoising_6 = wavelet_single_demensional_denoising_sqtwolog(data,threshold_usage='mln',noise_estimating_method='soft',wavelet_type='db3',decomposition_layer_number=8)#调用小波去噪函数
 time_7 = time.time()
 print(time_2 - time_1)
 print(time_3 - time_2)
