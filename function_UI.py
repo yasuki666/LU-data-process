@@ -22,6 +22,7 @@ from scipy import signal
 from pywt import wavedec
 import pywt
 
+import wavelet_functions
 import original_UI
 
 class Ui_MainWindow(original_UI.Ui_MainWindow):
@@ -41,6 +42,9 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
 
         # 按钮 导入数据
         self.import_data_button.clicked.connect(self.import_data)
+
+        # 按钮 快捷更改文件
+        self.next_file_button.clicked.connect(self.next_file)
 
         # 按钮 数据列数改变 ← →
         self.last_column_button.clicked.connect(self.column_number_minus)
@@ -79,7 +83,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
 
         # box 小波滤波
         self.decomposition_layer_value.setText('8')
-        self.wavelet_layer_number_value.setText('db3')
+        self.wavelet_type_value.setText('db3')
         self.wavelet_filter_button.clicked.connect(self.wavelet_filter)
 
 
@@ -102,6 +106,13 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         except:
             QMessageBox.information(self.centralwidget, '提示', '文件路径有误')
 
+    # 函数 快捷更改文件路径 ex: /totaldata_20210628_50mj.xls' -> /totaldata_20210628_60mj.xls'
+    def next_file(self):
+        file_path = self.file_path_value.text()
+        num = int(file_path[-8])
+        num += 1
+        file_path = file_path[:-8] + str(num) + file_path[-7:]
+        self.file_path_value.setText(file_path)
     #函数 数据列数减1
     def column_number_minus(self):
         num = int(self.column_number_value.text())
@@ -237,10 +248,48 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
 
     # 函数 小波滤波
     def wavelet_filter(self):
+        try:
+            # 调用已编写好的wavelet_functions.py的接口
+            wavelet_single_demensional_denoising_function_dictionary = {
+                'rigrsure': wavelet_functions.wavelet_single_demensional_denoising_rigrsure,
+                'sqtwolog': wavelet_functions.wavelet_single_demensional_denoising_sqtwolog,
+                'minimaxi': wavelet_functions.wavelet_single_demensional_denoising_minimaxi,
+                'heursure': wavelet_functions.wavelet_single_demensional_denoising_heursure}
 
-        '''a = pywt.wavedec(self.original_time_amplitude_aix,wavelet='db3',level=8)
-        for i in range(1,len(a)):
-            a[i] = pywt.threshold(a[i],0.1*max(a[i]),mode='soft')
-        data_wec = pywt.waverec(a,'db3')
-        self.processed_time_canvas_plot.setData(data_wec)'''
+            def wavelet_single_demensional_denoising(data, threshold_type, threshold_usage, noise_estimating_method,
+                                                     wavelet_type, decomposition_layer_number):
+                return wavelet_single_demensional_denoising_function_dictionary.get(threshold_type)(data,
+                                                                                                    threshold_usage,
+                                                                                                    noise_estimating_method,
+                                                                                                    wavelet_type,
+                                                                                                    decomposition_layer_number)
 
+            data = self.original_time_amplitude_aix
+            threshold_usage = self.threshold_process_method_value.currentText()
+            noise_estimating_method = self.threshold_function_select_method_value.currentText()
+            wavelet_type = self.wavelet_type_value.text()
+            decomposition_layer_number = int(self.decomposition_layer_value.text())
+            threshold_type = self.threshold_select_criteria_value.currentText()
+            self.processed_time_amplitude_aix = wavelet_single_demensional_denoising(data,
+                                                                                     threshold_type=threshold_type,
+                                                                                     threshold_usage=threshold_usage,
+                                                                                     noise_estimating_method=noise_estimating_method,
+                                                                                     wavelet_type=wavelet_type,
+                                                                                     decomposition_layer_number=decomposition_layer_number)
+            self.processed_time_canvas_plot.setData(self.time_aix, self.processed_time_amplitude_aix, pen='b')
+
+            # 变换频域
+            temprory_time_amplitude_aix = self.processed_time_amplitude_aix - np.mean(
+                self.processed_time_amplitude_aix)  # 消去直流分量，更能体现频谱信息
+            self.processed_frequency_amplitude_aix = np.fft.fft(temprory_time_amplitude_aix)  # 快速傅里叶变换
+            self.processed_frequency_amplitude_aix = abs(self.processed_frequency_amplitude_aix)  # 转换到实数域
+            n = len(self.processed_time_amplitude_aix)
+            self.sampling_rate = int(self.sampling_rate_value.text())
+            self.processed_frequency_amplitude_aix = self.processed_frequency_amplitude_aix[:int(n / 2)]
+            # 为了方便观看只展示前边0-100MHz部分
+            self.showing_processed_frequency_amplitude_aix = self.processed_frequency_amplitude_aix[
+                                                             :int(n * 100 / (self.sampling_rate))]
+            self.processed_frequency_canvas_plot.setData(self.showing_frequency_aix,
+                                                         self.showing_processed_frequency_amplitude_aix, pen='b')
+        except:
+            QMessageBox.information(self.centralwidget, '提示', '滤波失败，请检查滤波参数！')

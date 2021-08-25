@@ -382,12 +382,22 @@
      </property>
      <item>
       <property name="text">
-       <string>s</string>
+       <string>soft</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>h</string>
+       <string>hard</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>greater</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>less</string>
       </property>
      </item>
     </widget>
@@ -441,7 +451,7 @@
       <string/>
      </property>
     </widget>
-    <widget class="QLineEdit" name="wavelet_layer_number_value">
+    <widget class="QLineEdit" name="wavelet_type_value">
      <property name="geometry">
       <rect>
        <x>100</x>
@@ -555,7 +565,7 @@
       <string>分解层数</string>
      </property>
     </widget>
-    <widget class="QLabel" name="wavelet_layer_number_text">
+    <widget class="QLabel" name="wavelet_type_text">
      <property name="geometry">
       <rect>
        <x>20</x>
