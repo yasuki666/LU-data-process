@@ -35,6 +35,9 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         # open new file
         self.actionopen_new_file.triggered.connect(self.open_file)
 
+        # 菜单栏 Save
+        self.actionsave_single_column.triggered.connect(self.save_single_column)
+
         # 控制区模块 初始化
         self.column_number_value.setText('1')  # 默认列数为1
         self.sampling_rate_value.setText('2500')  # 默认采样率为2500MHz
@@ -90,8 +93,9 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
     # 函数 打开文件对话窗 将路径保存至文件路径栏
     def open_file(self):
         # 注意，这里参数必须传入self.centralwidget，因为QFileDialog只接受widget参数
-        file_name = QFileDialog.getOpenFileName(self.centralwidget, '选择文件', '', 'Excel files(*.xlsx , *.xls , *.csv)')
-        self.file_path_value.setText(file_name[0])
+        self.file_name_list = QFileDialog.getOpenFileNames(self.centralwidget, '选择文件', '', 'Excel files(*.xlsx , *.xls , *.csv)')
+        self.file_index = 0
+        self.file_path_value.setText(self.file_name_list[0][self.file_index])
 
     # 函数 按文件路径栏已储存的路径将文件数据导入
     def import_data(self):
@@ -102,8 +106,11 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         except:
             QMessageBox.information(self.centralwidget, '提示', '文件路径有误')
 
-    # 函数 快捷更改文件路径 ex: /totaldata_20210628_50mj.xls' -> /totaldata_20210628_60mj.xls'
+    # 函数 快捷更改文件路径
     def next_file(self):
+        '''
+        ex: /totaldata_20210628_50mj.xls' -> /totaldata_20210628_60mj.xls'
+
         file_path = self.file_path_value.text()
         i = 0
         while file_path[i] != '.':
@@ -112,7 +119,12 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         num = int(file_path[i - 4])
         num += 1
         file_path = file_path[:i - 4] + str(num) + file_path[i - 3:]
-        self.file_path_value.setText(file_path)
+        self.file_path_value.setText(file_path)'''
+        try:
+            self.file_index += 1
+            self.file_path_value.setText(self.file_name_list[0][self.file_index])
+        except:
+            QMessageBox.information(self.centralwidget, '提示', '文件路径列表已到底')
 
     # 函数 数据列数减1
     def column_number_minus(self):
@@ -360,3 +372,15 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
             self.processed_data_peaktopeak_value.setText(str(self.processed_data_peaktopeak))
         except:
             QMessageBox.information(self.centralwidget, '提示', '滤波失败，请检查滤波参数！')
+
+    # 函数 保存单列数据
+    def save_single_column(self):
+        save_file_name = self.file_name_list[self.file_index][0]
+        i,j = 0,0
+        while save_file_name[i] != '/':
+            i -= 1
+        while save_file_name[j] != '.':
+            j -= 1
+        save_file_name = save_file_name[i:j] + '_processed'
+        save_file_path = QFileDialog.getSaveFileName(self.centralwidget,'选择保存位置', save_file_name, 'Excel files(*.xlsx , *.xls , *.csv)')
+        print(save_file_path[0])
