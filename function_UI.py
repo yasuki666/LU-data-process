@@ -100,6 +100,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
     # 函数 按文件路径栏已储存的路径将文件数据导入
     def import_data(self):
         try:
+            '''后续可以考虑改用xlwings优化'''
             self.file_data = pd.read_excel(self.file_path_value.text())
             self.file_data = np.array(self.file_data)
             QMessageBox.information(self.centralwidget, '提示', '数据导入成功')
@@ -383,4 +384,14 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
             j -= 1
         save_file_name = save_file_name[i:j] + '_processed'
         save_file_path = QFileDialog.getSaveFileName(self.centralwidget,'选择保存位置', save_file_name, 'Excel files(*.xlsx , *.xls , *.csv)')
-        print(save_file_path[0])
+        save_file_path = save_file_path[0]
+        #保存时域数据
+        save_data_time = np.array([self.time_aix,self.processed_time_amplitude_aix])
+        save_data_time = save_data_time.T
+        save_dataframe_time = pd.DataFrame(save_data_time,columns=['time(us)','amplitude(V)'])
+        save_dataframe_time.to_excel(excel_writer=save_file_path[:-5]+'_time'+'.xlsx')
+        #保存频域数据
+        save_data_frequency = np.array([self.frequency_aix,self.processed_frequency_amplitude_aix])
+        save_data_frequency = save_data_frequency.T
+        save_dataframe_frequency = pd.DataFrame(save_data_frequency, columns=['frequency(MHz)', 'amplitude(V)'])
+        save_dataframe_frequency.to_excel(excel_writer=save_file_path[:-5] + '_frequency' + '.xlsx')
