@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QAction, QMainWindow, QFileDialog, QTextEdit, QMessageBox
+from PyQt5.QtWidgets import QAction, QMainWindow, QFileDialog, QTextEdit, QMessageBox, QDialog
 from PyQt5.QtWidgets import QApplication
 
 import pyqtgraph as pg
@@ -37,6 +37,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
 
         # 菜单栏 Save
         self.actionsave_single_column.triggered.connect(self.save_single_column)
+        self.actionsave_all_column.triggered.connect(self.save_all_columns)
 
         # 控制区模块 初始化
         self.column_number_value.setText('1')  # 默认列数为1
@@ -228,6 +229,7 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
             self.original_data_max = max(self.original_time_amplitude_aix)
             self.original_data_min = min(self.original_time_amplitude_aix)
             self.original_data_peaktopeak = self.original_data_max - self.original_data_min
+            #保留6位有效数字
             self.original_data_max = round(self.original_data_max, 6)
             self.original_data_min = round(self.original_data_min, 6)
             self.original_data_peaktopeak = round(self.original_data_peaktopeak, 6)
@@ -389,9 +391,41 @@ class Ui_MainWindow(original_UI.Ui_MainWindow):
         save_data_time = np.array([self.time_aix,self.processed_time_amplitude_aix])
         save_data_time = save_data_time.T
         save_dataframe_time = pd.DataFrame(save_data_time,columns=['time(us)','amplitude(V)'])
-        save_dataframe_time.to_excel(excel_writer=save_file_path[:-5]+'_time'+'.xlsx')
+        save_dataframe_time.to_excel(excel_writer=save_file_path[:-5]+'_time_line'+ str(self.column_num) +'.xlsx')
         #保存频域数据
         save_data_frequency = np.array([self.frequency_aix,self.processed_frequency_amplitude_aix])
         save_data_frequency = save_data_frequency.T
         save_dataframe_frequency = pd.DataFrame(save_data_frequency, columns=['frequency(MHz)', 'amplitude(V)'])
-        save_dataframe_frequency.to_excel(excel_writer=save_file_path[:-5] + '_frequency' + '.xlsx')
+        save_dataframe_frequency.to_excel(excel_writer=save_file_path[:-5] + '_frequency_line'+ str(self.column_num)  + '.xlsx')
+
+    #函数 对所有列数据进行处理并保存
+    def save_all_columns(self):
+        save_dialog = QtWidgets.QDialog()
+        save_dialog.resize(300,80)
+        label = QtWidgets.QLabel('请选择数据处理方式！',save_dialog)
+        label.move(80,15)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑")
+        font.setPointSize(12)
+        label.setFont(font)
+        btn1 = QtWidgets.QPushButton('低通滤波', save_dialog)
+        btn2 = QtWidgets.QPushButton('带通滤波', save_dialog)
+        btn3 = QtWidgets.QPushButton('小波滤波', save_dialog)
+        btn1.resize(60,20)
+        btn1.move(30, 50)
+        btn2.resize(60,20)
+        btn2.move(120, 50)
+        btn3.resize(60,20)
+        btn3.move(210, 50)
+
+        btn1.clicked.connect(self.save_lowpass_filter)
+        btn2.clicked.connect(self.save_bandpass_filter)
+        btn3.clicked.connect(self.save_wavelet_filter)
+
+        save_dialog.exec_()
+    def save_lowpass_filter(self):
+        print(1)
+    def save_bandpass_filter(self):
+        pass
+    def save_wavelet_filter(self):
+        pass
